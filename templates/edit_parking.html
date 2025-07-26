@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit Parking{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">Edit Parking Lot</h2>
+    <form method="POST" action="">
+        <div class="mb-3">
+            <label for="primary_location_name" class="form-label">Location Name</label>
+            <input type="text" class="form-control" id="primary_location_name" name="primary_location_name" value="{{ parking.primary_location_name }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="address" class="form-label">Address</label>
+            <input type="text" class="form-control" id="address" name="address" value="{{ parking.address }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="pin_code" class="form-label">Pin Code</label>
+            <input type="text" class="form-control" id="pin_code" name="pin_code" value="{{ parking.pin_code }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="price" class="form-label">Price per Hour</label>
+            <input type="number" class="form-control" id="price" name="price" value="{{ parking.price }}" step="0.01" required>
+        </div>
+        <div class="mb-3">
+            <label for="number_of_spots" class="form-label">Number of Spots</label>
+            <input type="number" class="form-control" id="number_of_spots" name="number_of_spots" value="{{ parking.number_of_spots }}" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Update</button>
+        <a href="{{ url_for('admin') }}" class="btn btn-secondary ms-2">Cancel</a>
+    </form>
+</div>
+{% endblock %}

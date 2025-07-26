@@ -1,0 +1,155 @@
+{% extends "user_base.html" %}
+
+{% block title %}User Summary{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4 text-center">User Summary</h2>
+
+    <!-- User Info -->
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">User Information</h5>
+                    <p class="card-text">Name: {{ user.fullname }}</p>
+                    <p class="card-text">Address: {{ user.address }}</p>
+                    <p class="card-text">Pincode: {{ user.pincode }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts -->
+        <div class="col-md-12">
+            <div style="position: relative; height: 400px;">
+                <canvas id="bookingChart" style="image-rendering: pixelated;"></canvas>
+            </div>
+        </div>
+        <div class="col-md-12 mt-4">
+            <div style="position: relative; height: 400px;">
+                <canvas id="expenseChart" style="image-rendering: pixelated;"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Chart.js Script -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+window.onload = function () {
+    const bookingData = {{ monthly_counts | tojson }};
+    const expenseData = {{ monthly_expenses | tojson }};
+    const ctx1 = document.getElementById('bookingChart').getContext('2d');
+    const ctx2 = document.getElementById('expenseChart').getContext('2d');
+
+    new Chart(ctx1, {
+        type: 'bar',
+        data: {
+            labels: ['January', 'February', 'March', 'April', 'May', 'June', 
+                     'July', 'August', 'September', 'October', 'November', 'December'],
+            datasets: [{
+                label: 'No. of Bookings',
+                data: bookingData,
+                backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                x: {
+                    ticks: {
+                        font: {
+                            size: 14
+                        },
+                        autoSkip: false
+                    },
+                    grid: {
+                        display: false
+                    }
+                },
+                y: {
+                    beginAtZero: true,
+                    suggestedMax: 5,
+                    ticks: {
+                        stepSize: 1,
+                        font: {
+                            size: 14
+                        }
+                    },
+                    grid: {
+                        drawTicks: false
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    labels: {
+                        font: {
+                            size: 14
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    new Chart(ctx2, {
+        type: 'bar',
+        data: {
+            labels: ['January', 'February', 'March', 'April', 'May', 'June', 
+                     'July', 'August', 'September', 'October', 'November', 'December'],
+            datasets: [{
+                label: 'Amount Spent',
+                data: expenseData,
+                backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                x: {
+                    ticks: {
+                        font: {
+                            size: 14
+                        },
+                        autoSkip: false
+                    },
+                    grid: {
+                        display: false
+                    }
+                },
+                y: {
+                    beginAtZero: true,
+                    suggestedMax: 100,
+                    ticks: {
+                        stepSize: 10,
+                        font: {
+                            size: 14
+                        }
+                    },
+                    grid: {
+                        drawTicks: false
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    labels: {
+                        font: {
+                            size: 14
+                        }
+                    }
+                }
+            }
+        }
+    });
+};
+</script>
+{% endblock %}
+

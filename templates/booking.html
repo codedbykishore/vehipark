@@ -1,0 +1,28 @@
+{% extends "user_base.html" %}
+
+{% block title %}Book a Parking Spot{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4 text-center">Book a Parking Spot</h2>
+
+    <form method="POST" action="/booking/{{ spot_id }}">
+         <div class="mb-3">
+            <label for="parking_id" class="form-label">Parking lot</label>
+            <input type="text" name="parking_id" class="form-control" id="parking_id" value="{{ parking.id }}" readonly required >
+        </div>
+
+         <div class="mb-3">
+            <label for="user_id" class="form-label">User ID</label>
+            <input type="text" name="user_id" class="form-control" id="user_id" value="{{ user_id }}" readonly required >
+        </div>
+        <div class="mb-3">
+            <label for="vehicle_number" class="form-label">Vehicle Number</label>
+            <input type="text" name="vehicle_number" class="form-control" id="vehicle_number" required>
+        </div>
+   
+        <button type="submit" class="btn btn-primary w-100">Book Now</button>
+    </form>
+</div>
+{% endblock %}
+

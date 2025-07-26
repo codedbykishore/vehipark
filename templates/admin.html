@@ -1,0 +1,42 @@
+<!-- templates/admin.html -->
+{% extends 'base.html' %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<h1 class="text-center text-primary mb-4">Hello Admin</h1>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-4 mb-3">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Manage Parking</h5>
+                    <p class="card-text">Add, Update, Delete parking</p>
+                    <a href="/parking" class="btn btn-primary">Manage Parking</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Manage User</h5>
+                    <p class="card-text">Add, Update, Delete User</p>
+                    <a href="/admin_user" class="btn btn-primary">Manage Users</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Summary</h5>
+                    <p class="card-text">Summary of all parking and users</p>
+                    <a href="/admin/summary" class="btn btn-primary">Summary of Data</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}

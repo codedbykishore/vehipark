@@ -1,0 +1,50 @@
+{% extends 'user_base.html' %}
+
+{% block title %}Booking History{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4 text-center">Booking History</h2>
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th scope="col">Spot ID</th>
+                <th scope="col">Vehicle Number</th>
+                <th scope="col">Start Time</th>
+                <th scope="col">End Time</th>
+                <th scope="col">Cost</th>
+                <th scope="col">Status</th>
+                <th scope='col'>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for booking in bookings %}
+            <tr>
+                <td>{{ booking.spot_id }}</td>
+                <td>{{ booking.vehicle_number }}</td>
+                <td>{{ booking.start_time }}</td>
+                <td>{{ booking.end_time }}</td>
+                <td>{{ booking.parking_cost }}</td>
+                <td>
+                    {% if booking.status == 'O' %}
+                        Occupied
+                    {% else %}
+                        Available
+                    {% endif %}
+                </td>
+                <td>
+                    {% if booking.status == 'Released' %}
+                        Released
+                    {% else %}
+                        <a href="/release_booking/{{ booking.id }}" class="btn btn-info btn-sm">release</a>
+                    {% endif %}
+                </td>
+
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
+
+

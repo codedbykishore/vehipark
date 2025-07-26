@@ -1,0 +1,41 @@
+{% extends "user_base.html" %}
+
+{% block title %}Available Parking Lots{% endblock %}
+
+{% block content %}
+    <h2 class="mb-4 text-center">Available Parking Lots</h2>
+
+    <!-- Search Bar -->
+    <form method="GET" action="{{ url_for('user') }}" class="mb-4">
+        <div class="input-group">
+            <input type="text" name="query" class="form-control" placeholder="Search by location or pincode" value="{{ request.args.get('query', '') }}">
+            <button class="btn btn-primary" type="submit">Search</button>
+        </div>
+    </form>
+
+    <!-- Cards Grid -->
+    <div class="row">
+        {% for lot in parkings %}
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">{{ lot.primary_location_name }}</h5>
+                    <p class="card-text">
+                        <strong>Address:</strong> {{ lot.address }}<br>
+                        <strong>Pin Code:</strong> {{ lot.pin_code }}<br>
+                        <strong>Price:</strong> ₹{{ lot.price }} per hour<br>
+                        <strong>Available Spots:</strong> {{ available_counts[lot.id] }}/{{ lot.number_of_spots }}
+                    </p>
+                   <button class="btn btn-outline-success"><a href="/booking/{{ lot.id }} "class=btn btn-success w-100>Book Now</a></button> 
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="col-12">
+            <div class="alert alert-info text-center">No parking lots found.</div>
+        </div>
+        {% endfor %}
+    </div>
+
+
+{% endblock %}
