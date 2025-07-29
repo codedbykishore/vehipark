@@ -55,20 +55,21 @@
 
 {% if spot.status == 'O' %}
   {% set current_booking = None %}
+  {% set found = false %}
   {% for booking in spot.bookings %}
-    {% if booking.status == 'O' %}
+    {% if not found and booking.status == 'O' %}
       {% set current_booking = booking %}
-      {% break %}
+      {% set found = true %}
     {% endif %}
-  {% endfor %}
+  {% endfor %}  {# ← This was missing, and instead you had endif here #}
+{% endif %}
 
-  {% if current_booking %}
-    <hr>
-    <p class="text-danger">Currently booked:</p>
-    <p><strong>Vehicle:</strong> {{ current_booking.vehicle_number }}</p>
-    <p><strong>User:</strong> {{ current_booking.user.fullname }}</p>
-    <p><strong>From:</strong> {{ current_booking.start_time.strftime('%Y-%m-%d %H:%M') }}</p>
-  {% endif %}
+{% if current_booking %}
+  <hr>
+  <p class="text-danger">Currently booked:</p>
+  <p><strong>Vehicle:</strong> {{ current_booking.vehicle_number }}</p>
+  <p><strong>User:</strong> {{ current_booking.user.fullname }}</p>
+  <p><strong>From:</strong> {{ current_booking.start_time.strftime('%Y-%m-%d %H:%M') }}</p>
 {% endif %}
                                         </div>
                                       <div class="modal-footer">
