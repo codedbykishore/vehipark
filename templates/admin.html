@@ -6,6 +6,13 @@
 {% block content %}
 <h1 class="text-center text-primary mb-4">Hello Admin</h1>
 
+<form method="get" action="{{ url_for('admin_search') }}" class="mb-4 container">
+  <div class="input-group">
+    <input type="text" name="query" class="form-control" placeholder="Search Users, Bookings, or Parking..." required>
+    <button class="btn btn-primary" type="submit">Search</button>
+  </div>
+</form>
+
 <div class="container">
     <div class="row">
         <div class="col-md-4 mb-3">

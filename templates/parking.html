@@ -53,15 +53,23 @@
                                             <p><strong>Price:</strong> ₹{{ parking.price }}</p>
                                             <p><strong>Location:</strong> {{ parking.primary_location_name }}</p>
 
-                                            {% if spot.status == 'O' %}
-                                            {% for booking in spot.bookings %}
-                                            <hr>
-                                            <p class="text-danger">Already booked:</p>
-                                            <p><strong>Vehicle:</strong> {{ booking.vehicle_number }}</p>
-                                            <p><strong>User:</strong> {{ booking.user.fullname }}</p>
-                                            <p><strong>From:</strong> {{ booking.start_time }}</p>
-                                            {% endfor %}
-                                            {% endif %}
+{% if spot.status == 'O' %}
+  {% set current_booking = None %}
+  {% for booking in spot.bookings %}
+    {% if booking.status == 'O' %}
+      {% set current_booking = booking %}
+      {% break %}
+    {% endif %}
+  {% endfor %}
+
+  {% if current_booking %}
+    <hr>
+    <p class="text-danger">Currently booked:</p>
+    <p><strong>Vehicle:</strong> {{ current_booking.vehicle_number }}</p>
+    <p><strong>User:</strong> {{ current_booking.user.fullname }}</p>
+    <p><strong>From:</strong> {{ current_booking.start_time.strftime('%Y-%m-%d %H:%M') }}</p>
+  {% endif %}
+{% endif %}
                                         </div>
                                       <div class="modal-footer">
     {% if spot.status == 'A' %}

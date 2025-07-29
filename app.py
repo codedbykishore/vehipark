@@ -318,12 +318,9 @@ def booking(spot_id):
 
     if request.method == "POST":
         vehicle_number = request.form["vehicle_number"]
-
-        # Get user_id either from form (admin) or session (user)
         user_id = request.form.get("user_id") or session.get("user_id")
         user_id = int(user_id)
 
-        # Find an available spot
         available_spot = parkingSpot.query.filter_by(
             parking_id=spot_id, status="A"
         ).first()
@@ -331,8 +328,6 @@ def booking(spot_id):
             return "No available spots", 400
 
         available_spot.status = "O"
-
-        # Create new booking
         booking = Booking(
             user_id=user_id,
             spot_id=available_spot.id,
@@ -345,13 +340,20 @@ def booking(spot_id):
         db.session.add(booking)
         db.session.commit()
 
-        # Redirect based on role
-        if session.get("role") == "ADMIN":
+        if session.get("username") == "admin":
             return redirect(url_for("admin"))
         return redirect(url_for("user"))
 
+    users = []
+    if session["username"] == "admin":
+        users = User.query.filter(User.username != "admin").all()
+
     return render_template(
-        "booking.html", parking=parking, spot_id=spot_id, user_id=session.get("user_id")
+        "booking.html",
+        parking=parking,
+        spot_id=spot_id,
+        user_id=session.get("user_id"),
+        users=users,
     )
 
 
@@ -521,7 +523,9 @@ def delete_user(user_id):
 
     user = User.query.get_or_404(user_id)
 
-    if user.bookings:
+    # Only block if user has active (unreleased) bookings
+    active_bookings = Booking.query.filter_by(user_id=user_id, status="O").first()
+    if active_bookings:
         flash("Cannot delete user with active bookings.", "error")
         return redirect(url_for("admin_user"))
 
