@@ -102,54 +102,58 @@
                                 </div>
                             </div>
 
-                            <!-- Booking Modal -->
-                            <div class="modal fade" id="bookingFormModal{{ spot.id }}" tabindex="-1"
-                                aria-labelledby="bookingFormModalLabel{{ spot.id }}" aria-hidden="true">
-                                <div class="modal-dialog">
-                                    <div class="modal-content">
-                                        <form action="{{ url_for('booking', spot_id=spot.id) }}" method="POST">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="bookingFormModalLabel{{ spot.id }}">Book
-                                                    Spot {{ spot.spot_number }}</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                    aria-label="Close"></button>
-                                            </div>
+                                <!-- Booking Modal -->
+                                <div class="modal fade" id="bookingFormModal{{ spot.id }}" tabindex="-1"
+                                    aria-labelledby="bookingFormModalLabel{{ spot.id }}" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <form action="{{ url_for('admin_booking', spot_id=spot.id) }}" method="POST">
 
-                                            <div class="modal-body">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="bookingFormModalLabel{{ spot.id }}">Book
+                                                        Spot {{ spot.spot_number }}</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                        aria-label="Close"></button>
+                                                </div>
 
-                                                <div class="mb-3">
-                                                    <label for="user_id_{{ spot.id }}" class="form-label">Select
-                                                        User</label>
-                                                    <select class="form-select" name="user_id"
-                                                        id="user_id_{{ spot.id }}" required>
-                                                        {% for user in users %}
-                                                        <option value="{{ user.id }}">{{ user.fullname }}</option>
+                                                <div class="modal-body">
+
+                                                    <div class="mb-3">
+                                                        <label for="user_id_{{ spot.id }}" class="form-label">Select
+                                                            User</label>
+                                                        <select class="form-select" name="user_id"
+                                                            id="user_id_{{ spot.id }}" required>
+                                                            {% for user in users %}
+                                                            {% if user.role != 'ADMIN' %}
+                                                                <option value="{{ user.id }}">{{ user.fullname }}</option>
+                                                            {% endif %}
                                                         {% endfor %}
-                                                    </select>
-                                                </div>
 
-                                                <div class="mb-3">
-                                                    <label for="vehicle_number{{ spot.id }}" class="form-label">Vehicle
-                                                        Number</label>
-                                                    <input type="text" class="form-control" name="vehicle_number"
-                                                        id="vehicle_number{{ spot.id }}" required>
+                                                        </select>
+                                                    </div>
+
+                                                    <div class="mb-3">
+                                                        <label for="vehicle_number{{ spot.id }}" class="form-label">Vehicle
+                                                            Number</label>
+                                                        <input type="text" class="form-control" name="vehicle_number"
+                                                            id="vehicle_number{{ spot.id }}" required>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="end_time{{ spot.id }}" class="form-label">End
+                                                            Time</label>
+                                                        <input type="datetime-local" class="form-control" name="end_time"
+                                                            id="end_time{{ spot.id }}" >
+                                                    </div>
                                                 </div>
-                                                <div class="mb-3">
-                                                    <label for="end_time{{ spot.id }}" class="form-label">End
-                                                        Time</label>
-                                                    <input type="datetime-local" class="form-control" name="end_time"
-                                                        id="end_time{{ spot.id }}" >
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary"
+                                                        data-bs-dismiss="modal">Cancel</button>
+                                                    <button type="submit" class="btn btn-success">Confirm Booking</button>
                                                 </div>
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary"
-                                                    data-bs-dismiss="modal">Cancel</button>
-                                                <button type="submit" class="btn btn-success">Confirm Booking</button>
-                                            </div>
-                                        </form>
+                                            </form>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
 
                             <!-- Delete Spot Modal -->
                             <div class="modal fade" id="confirmDeleteModal{{ spot.id }}" tabindex="-1"

@@ -288,6 +288,7 @@ def delete_parking(parking_id):
 def user():
     if "username" not in session:
         return redirect(url_for("login"))
+    username = session["username"]
     query = request.args.get("query")
     if query:
         parkings = Parking.query.filter(
@@ -303,7 +304,7 @@ def user():
             parking_id=parking.id, status="A"
         ).count()
     return render_template(
-        "user.html", parkings=parkings, available_counts=available_counts
+        "user.html", username=username,parkings=parkings, available_counts=available_counts
     )
 
 
@@ -598,6 +599,49 @@ def admin_summary():
         revenue_by_lot=revenue_by_lot,
         bar_chart_url=bar_chart_url,
         pie_chart_url=pie_chart_url,
+    )
+
+
+@app.route("/admin/booking/<int:spot_id>", methods=["GET", "POST"])
+def admin_booking(spot_id):
+    if session.get("username") != "admin":
+        return redirect(url_for("login"))
+
+    parking = parkingSpot.query.filter_by(id=spot_id).first()
+    if not parking:
+        return redirect(url_for("admin"))
+
+    if request.method == "POST":
+        vehicle_number = request.form["vehicle_number"]
+        user_id = int(request.form["user_id"])  # Admin selects the user manually
+
+        available_spot = parkingSpot.query.filter_by(parking_id=spot_id, status="A").first()
+        if not available_spot:
+            flash("No available spots", "danger")
+            return redirect(url_for("admin"))
+
+        available_spot.status = "O"
+        booking = Booking(
+            user_id=user_id,
+            spot_id=available_spot.id,
+            vehicle_number=vehicle_number,
+            start_time=datetime.now(),
+            end_time=None,
+            parking_cost=parking.parking.price,
+        )
+
+        db.session.add(booking)
+        db.session.commit()
+        flash("Booking successful", "success")
+        return redirect(url_for("admin"))
+
+    users = User.query.filter(User.username != "admin").all()
+
+    return render_template(
+        "admin_booking.html",
+        parking=parking,
+        spot_id=spot_id,
+        users=users
     )
 
 
