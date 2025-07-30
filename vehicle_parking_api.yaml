@@ -1,0 +1,196 @@
+openapi: 3.0.0
+info:
+  title: Vehicle Parking App API
+  version: 1.0.0
+  description: API specification for the Vehicle Parking Management System built with Flask.
+
+servers:
+  - url: http://localhost:5000
+
+paths:
+
+  /:
+    post:
+      summary: Login
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '302':
+          description: Redirect on success
+
+  /register:
+    post:
+      summary: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+                fullname:
+                  type: string
+                address:
+                  type: string
+                pincode:
+                  type: string
+      responses:
+        '302':
+          description: Redirect to login
+
+  /admin:
+    get:
+      summary: Admin dashboard
+      responses:
+        '200':
+          description: Admin homepage
+
+  /parking:
+    get:
+      summary: Show parking lots for users
+      responses:
+        '200':
+          description: Parking list
+    post:
+      summary: Post data for parking actions
+      responses:
+        '302':
+          description: Redirect after action
+
+  /add_parking:
+    post:
+      summary: Admin adds new parking lot
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              properties:
+                primary_location_name:
+                  type: string
+                address:
+                  type: string
+                pin_code:
+                  type: string
+                price:
+                  type: number
+                number_of_spots:
+                  type: integer
+      responses:
+        '302':
+          description: Redirect to parking list
+
+  /edit_parking/{parking_id}:
+    post:
+      summary: Edit a parking lot
+      parameters:
+        - name: parking_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              properties:
+                primary_location_name:
+                  type: string
+                address:
+                  type: string
+                pin_code:
+                  type: string
+                price:
+                  type: number
+                number_of_spots:
+                  type: integer
+      responses:
+        '302':
+          description: Redirect to parking page
+
+  /booking/{spot_id}:
+    post:
+      summary: Book a parking spot
+      parameters:
+        - name: spot_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              properties:
+                vehicle_number:
+                  type: string
+                user_id:
+                  type: integer
+      responses:
+        '302':
+          description: Redirect to dashboard
+
+  /release_booking/{booking_id}:
+    post:
+      summary: Release a booking
+      parameters:
+        - name: booking_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '302':
+          description: Redirect to history
+
+  /history:
+    get:
+      summary: View user booking history
+      responses:
+        '200':
+          description: List of bookings
+
+  /summary:
+    get:
+      summary: User summary with monthly booking and expense
+      responses:
+        '200':
+          description: Render user summary page
+
+  /admin/summary:
+    get:
+      summary: Admin summary with charts
+      responses:
+        '200':
+          description: Admin summary with bar/pie charts
+
+  /admin/search:
+    get:
+      summary: Search across users/bookings/parking
+      parameters:
+        - name: query
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Search results
+
+  /logout:
+    get:
+      summary: Logout current session
+      responses:
+        '302':
+          description: Redirect to login
