@@ -1,0 +1,29 @@
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <div style="position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 1050; width: 25%;">
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show text-center shadow-lg" 
+                     role="alert">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+        <script>
+            setTimeout(function () {
+                let alerts = document.querySelectorAll(".alert");
+                alerts.forEach(function (alert) {
+                    let opacity = 1;
+                    let fadeEffect = setInterval(function () {
+                        if (opacity > 0) {
+                            opacity -= 0.1;
+                            alert.style.opacity = opacity;
+                        } else {
+                            clearInterval(fadeEffect);
+                            alert.remove();
+                        }
+                    }, 100);
+                });
+            }, 1000);
+        </script>
+    {% endif %}
+{% endwith %}

@@ -7,7 +7,7 @@ from datetime import datetime
 from flask import flash
 import matplotlib
 
-matplotlib.use("Agg")  # Use non-interactive backend (no GUI)
+matplotlib.use("Agg")
 
 import matplotlib.pyplot as plt
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -107,31 +107,29 @@ with app.app_context():
     db.create_all()
     create_admin()
 
-# @app.route('/')
-# def index():
-#     return render_template('index.html')
-
 
 @app.route("/", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]
-        print(username, password)
         user = User.query.filter_by(username=username).first()
+
         if user:
             if not check_password_hash(user.password, password):
-                return redirect(url_for("login"))
-            if user.username == "admin":
-                session["username"] = username
-                return redirect(url_for("admin"))
-            else:
-                session["username"] = username
-                session["user_id"] = user.id
-                return redirect(url_for("user"))
+                flash("Incorrect password. Please try again.", "danger")
+                return render_template("login.html")
+
+            session["username"] = username
+            session["user_id"] = user.id
+
+            flash("Login successful", "success")
+            return redirect(url_for("admin" if user.username == "admin" else "user"))
 
         else:
-            return redirect(url_for("login"))
+            flash("User not found. Please check your username.", "danger")
+            return render_template("login.html")
+
     return render_template("login.html")
 
 
@@ -246,13 +244,11 @@ def edit_parking(parking_id):
 
         current_spots = {spot.spot_number: spot for spot in parking.spots}
 
-        # Add new spots if increasing
         for i in range(1, new_spot_count + 1):
             if i not in current_spots:
                 new_spot = parkingSpot(parking_id=parking.id, spot_number=i, status="A")
                 db.session.add(new_spot)
 
-        # Remove extra spots if decreasing and no booking history
         for spot_number, spot in current_spots.items():
             if spot_number > new_spot_count:
                 has_history = Booking.query.filter_by(spot_id=spot.id).first()
@@ -304,7 +300,10 @@ def user():
             parking_id=parking.id, status="A"
         ).count()
     return render_template(
-        "user.html", username=username,parkings=parkings, available_counts=available_counts
+        "user.html",
+        username=username,
+        parkings=parkings,
+        available_counts=available_counts,
     )
 
 
@@ -375,18 +374,16 @@ def user_summary():
     user_id = session["user_id"]
     user = User.query.get(user_id)
 
-    # Initialize counts and expenses for all 12 months
     monthly_counts = [0] * 12
     monthly_expenses = [0] * 12
 
-    # Get all bookings by user
     bookings = Booking.query.filter_by(user_id=user_id).all()
 
     for booking in bookings:
         if booking.start_time:
-            month = booking.start_time.month  # 1 = Jan, 12 = Dec
+            month = booking.start_time.month
             monthly_counts[month - 1] += 1
-            monthly_expenses[month - 1] += booking.parking_cost or 0  # handle None case
+            monthly_expenses[month - 1] += booking.parking_cost or 0
 
     print("Monthly Counts:", monthly_counts)
     print("Monthly Expenses:", monthly_expenses)
@@ -407,7 +404,6 @@ def admin_search():
     parking_results = []
 
     if query:
-        # USER SEARCH: username, fullname, address, pincode
         user_results = User.query.filter(
             or_(
                 User.username.ilike(f"%{query}%"),
@@ -417,7 +413,6 @@ def admin_search():
             )
         ).all()
 
-        # BOOKING SEARCH: vehicle_number, id, status, parking_cost, start_time
         booking_results = Booking.query.filter(
             or_(
                 Booking.vehicle_number.ilike(f"%{query}%"),
@@ -429,7 +424,6 @@ def admin_search():
             )
         ).all()
 
-        # PARKING SEARCH: primary_location_name, address, pin_code, price
         parking_results = Parking.query.filter(
             or_(
                 Parking.primary_location_name.ilike(f"%{query}%"),
@@ -524,7 +518,6 @@ def delete_user(user_id):
 
     user = User.query.get_or_404(user_id)
 
-    # Only block if user has active (unreleased) bookings
     active_bookings = Booking.query.filter_by(user_id=user_id, status="O").first()
     if active_bookings:
         flash("Cannot delete user with active bookings.", "error")
@@ -561,10 +554,8 @@ def admin_summary():
                 total_revenue += booking.parking_cost
         revenue_by_lot.append(total_revenue)
 
-    # Ensure charts folder exists
     os.makedirs(app.config["CHART_FOLDER"], exist_ok=True)
 
-    # Bar Chart: Available vs Occupied
     plt.figure(figsize=(10, 6))
     plt.bar(lot_names, available_counts, label="Available Spots")
     plt.bar(lot_names, occupied_counts, bottom=available_counts, label="Occupied Spots")
@@ -578,7 +569,6 @@ def admin_summary():
     plt.savefig(bar_chart_path)
     plt.close()
 
-    # Pie Chart: Revenue Distribution
     plt.figure(figsize=(8, 6))
     plt.pie(revenue_by_lot, labels=lot_names, autopct="%1.1f%%")
     plt.title("Revenue by Parking Lot")
@@ -587,7 +577,6 @@ def admin_summary():
     plt.savefig(pie_chart_path)
     plt.close()
 
-    # URLs to be used in HTML
     bar_chart_url = url_for("static", filename="charts/bar_chart.png")
     pie_chart_url = url_for("static", filename="charts/pie_chart.png")
 
@@ -613,9 +602,11 @@ def admin_booking(spot_id):
 
     if request.method == "POST":
         vehicle_number = request.form["vehicle_number"]
-        user_id = int(request.form["user_id"])  # Admin selects the user manually
+        user_id = int(request.form["user_id"])
 
-        available_spot = parkingSpot.query.filter_by(parking_id=spot_id, status="A").first()
+        available_spot = parkingSpot.query.filter_by(
+            parking_id=spot_id, status="A"
+        ).first()
         if not available_spot:
             flash("No available spots", "danger")
             return redirect(url_for("admin"))
@@ -638,10 +629,7 @@ def admin_booking(spot_id):
     users = User.query.filter(User.username != "admin").all()
 
     return render_template(
-        "admin_booking.html",
-        parking=parking,
-        spot_id=spot_id,
-        users=users
+        "admin_booking.html", parking=parking, spot_id=spot_id, users=users
     )
 
 

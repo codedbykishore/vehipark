@@ -1,29 +1,54 @@
-
-<!-- templates/user_base.html -->
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>{% block title %}User Page{% endblock %}</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body style="background-color: #f8f9fa;">
+    <head>
+        <meta charset="UTF-8">
+        <title>
+            {% block title %}User Page{% endblock %}
+        </title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+              rel="stylesheet">
+    </head>
+    <body style="background-color: #f8f9fa;">
+        <nav style="display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    padding: 10px 20px;
+                    background-color: #343a40">
+            <a href="/user"
+               style="text-decoration: none;
+                      color: white;
+                      font-weight: bold;
+                      font-size: 18px">VehiPark</a>
+            <div style="display: flex; gap: 15px;">
+                <a href="/user"
+                   style="text-decoration: none;
+                          color: white;
+                          padding: 6px 12px;
+                          border-radius: 4px">Home</a>
+                <a href="/history"
+                   style="text-decoration: none;
+                          color: white;
+                          padding: 6px 12px;
+                          border-radius: 4px">Booking History</a>
+                <a href="/summary"
+                   style="text-decoration: none;
+                          color: white;
+                          padding: 6px 12px;
+                          border-radius: 4px">Summary</a>
+                <a href="/logout"
+                   style="text-decoration: none;
+                          color: white;
+                          background-color: #dc3545;
+                          padding: 6px 12px;
+                          border-radius: 4px">Logout</a>
+            </div>
+        </nav>
 
-<nav style="display: flex; justify-content: space-between; align-items: center; padding: 10px 20px; background-color: #343a40;">
-  <a href="/user" style="text-decoration: none; color: white; font-weight: bold; font-size: 18px;">VehiPark</a>
-  <div style="display: flex; gap: 15px;">
-    <a href="/user" style="text-decoration: none; color: white; padding: 6px 12px; border-radius: 4px;">Home</a>
-    <a href="/history" style="text-decoration: none; color: white; padding: 6px 12px; border-radius: 4px;">Booking History</a>
-    <a href="/summary" style="text-decoration: none; color: white; padding: 6px 12px; border-radius: 4px;">Summary</a>
-    <a href="/logout" style="text-decoration: none; color: white; background-color: #dc3545; padding: 6px 12px; border-radius: 4px;">Logout</a>
-  </div>
-</nav>
-  <!-- Main Content Block -->
-  <div style="padding: 40px;">
-    {% block content %}{% endblock %}
-  </div>
+        <div class="" style="width: 25%">{% include 'message.html' %}</div>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
+        <div style="padding: 40px;">
+            {% block content %}{% endblock %}
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    </body>
 </html>
-
