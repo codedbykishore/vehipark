@@ -1,6 +1,7 @@
 from flask import Flask, render_template, redirect, url_for, request
 from flask import session
 from flask_sqlalchemy import SQLAlchemy
+from math import ceil
 
 import os
 from datetime import datetime
@@ -469,17 +470,16 @@ def release_booking(booking_id):
     if booking.end_time:
         flash("Booking already released", "error")
         return redirect(url_for("history"))
+
     booking.end_time = datetime.now()
     duration = booking.end_time - booking.start_time
-    print(duration)
-    hours = int(duration.total_seconds() // 3600)
+    hours = ceil(duration.total_seconds() / 3600)
+
     booking.parking_cost = hours * booking.spot.parking.price
-    if booking.parking_cost < booking.spot.parking.price:
-        booking.parking_cost = booking.spot.parking.price
     booking.spot.status = "A"
     booking.status = "Released"
-    db.session.commit()
 
+    db.session.commit()
     return redirect(url_for("history"))
 
 
@@ -550,8 +550,9 @@ def admin_summary():
 
         total_revenue = 0
         for spot in lot.spots:
-            for booking in spot.bookings:
-                total_revenue += booking.parking_cost
+             for booking in spot.bookings:
+                if booking.status == "Released":
+                    total_revenue += booking.parking_cost
         revenue_by_lot.append(total_revenue)
 
     os.makedirs(app.config["CHART_FOLDER"], exist_ok=True)
@@ -590,7 +591,6 @@ def admin_summary():
         pie_chart_url=pie_chart_url,
     )
 
-
 @app.route("/admin/booking/<int:spot_id>", methods=["GET", "POST"])
 def admin_booking(spot_id):
     if session.get("username") != "admin":
@@ -602,11 +602,10 @@ def admin_booking(spot_id):
 
     if request.method == "POST":
         vehicle_number = request.form["vehicle_number"]
-        user_id = int(request.form["user_id"])
+        user_id = int(request.form["user_id"])  
 
-        available_spot = parkingSpot.query.filter_by(
-            parking_id=spot_id, status="A"
-        ).first()
+        available_spot = parkingSpot.query.filter_by(parking_id=parking.parking_id, status="A").first()
+
         if not available_spot:
             flash("No available spots", "danger")
             return redirect(url_for("admin"))
@@ -629,7 +628,10 @@ def admin_booking(spot_id):
     users = User.query.filter(User.username != "admin").all()
 
     return render_template(
-        "admin_booking.html", parking=parking, spot_id=spot_id, users=users
+        "admin_booking.html",
+        parking=parking,
+        spot_id=spot_id,
+        users=users
     )
 
 

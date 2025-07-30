@@ -8,6 +8,7 @@
     <table class="table table-hover">
         <thead>
             <tr>
+                <th scope="col">Location</th>
                 <th scope="col">Spot ID</th>
                 <th scope="col">Vehicle Number</th>
                 <th scope="col">Start Time</th>
@@ -20,6 +21,7 @@
         <tbody>
             {% for booking in bookings %}
             <tr>
+                <td>{{ booking.spot.parking.primary_location_name }}</td>   
                 <td>{{ booking.spot_id }}</td>
                 <td>{{ booking.vehicle_number }}</td>
                 <td>{{ booking.start_time }}</td>
