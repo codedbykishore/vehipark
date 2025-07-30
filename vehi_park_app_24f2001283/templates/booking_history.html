@@ -21,24 +21,31 @@
         <tbody>
             {% for booking in bookings %}
             <tr>
-                <td>{{ booking.spot.parking.primary_location_name }}</td>   
+                <td>{{ booking.spot.parking.primary_location_name }}</td>
                 <td>{{ booking.spot_id }}</td>
                 <td>{{ booking.vehicle_number }}</td>
                 <td>{{ booking.start_time }}</td>
                 <td>{{ booking.end_time }}</td>
-                <td>{{ booking.parking_cost }}</td>
+                <td>
+                    {% if booking.status == 'Released' %}
+                    ₹{{ booking.parking_cost }}
+                    {% else %}
+                    Pending
+                    {% endif %}
+                </td>
+
                 <td>
                     {% if booking.status == 'O' %}
-                        Occupied
+                    Occupied
                     {% else %}
-                        Available
+                    Available
                     {% endif %}
                 </td>
                 <td>
                     {% if booking.status == 'Released' %}
-                        Released
+                    Released
                     {% else %}
-                        <a href="/release_booking/{{ booking.id }}" class="btn btn-info btn-sm">release</a>
+                    <a href="/release_booking/{{ booking.id }}" class="btn btn-info btn-sm">release</a>
                     {% endif %}
                 </td>
 
@@ -48,5 +55,3 @@
     </table>
 </div>
 {% endblock %}
-
-

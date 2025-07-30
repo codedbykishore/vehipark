@@ -15,6 +15,7 @@
         <nav style="display: flex; justify-content: space-between; align-items: center; padding: 10px 20px; background-color: #343a40">
             <a href="/admin" style="text-decoration: none; color: white; font-weight: bold; font-size: 18px">Parking Manager</a>
             {% if session.get('username') %}
+             
                 <a href="/logout" style="text-decoration: none; color: white; background-color: #dc3545; padding: 6px 12px; border-radius: 4px">Logout</a>
             {% endif %}
         </nav>

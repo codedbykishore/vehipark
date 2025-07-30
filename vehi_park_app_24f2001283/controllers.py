@@ -368,6 +368,8 @@ def delete_spot(spot_id):
     return redirect(url_for("parking"))
 
 
+from math import ceil
+
 @app.route("/release_booking/<int:booking_id>", methods=["GET", "POST"])
 def release_booking(booking_id):
     if "username" not in session:
@@ -381,13 +383,18 @@ def release_booking(booking_id):
     booking.end_time = datetime.now()
     duration = booking.end_time - booking.start_time
     hours = ceil(duration.total_seconds() / 3600)
-
     booking.parking_cost = hours * booking.spot.parking.price
+
+  
+    if booking.parking_cost < booking.spot.parking.price:
+        booking.parking_cost = booking.spot.parking.price
+
     booking.spot.status = "A"
     booking.status = "Released"
-
     db.session.commit()
+
     return redirect(url_for("history"))
+
 
 
 @app.route("/admin_user", methods=["GET", "POST"])
@@ -464,6 +471,7 @@ def admin_summary():
 
     os.makedirs(app.config["CHART_FOLDER"], exist_ok=True)
 
+    # Bar Chart
     plt.figure(figsize=(10, 6))
     plt.bar(lot_names, available_counts, label="Available Spots")
     plt.bar(lot_names, occupied_counts, bottom=available_counts, label="Occupied Spots")
@@ -477,9 +485,14 @@ def admin_summary():
     plt.savefig(bar_chart_path)
     plt.close()
 
+    # Pie Chart (safe check)
     plt.figure(figsize=(8, 6))
-    plt.pie(revenue_by_lot, labels=lot_names, autopct="%1.1f%%")
-    plt.title("Revenue by Parking Lot")
+    if revenue_by_lot and sum(revenue_by_lot) > 0:
+        plt.pie(revenue_by_lot, labels=lot_names, autopct="%1.1f%%")
+        plt.title("Revenue by Parking Lot")
+    else:
+        plt.text(0.5, 0.5, 'No Revenue Data', ha='center', va='center', fontsize=14)
+        plt.axis('off')  # Hide axis if no pie
     plt.tight_layout()
     pie_chart_path = os.path.join(app.config["CHART_FOLDER"], "pie_chart.png")
     plt.savefig(pie_chart_path)
@@ -497,6 +510,7 @@ def admin_summary():
         bar_chart_url=bar_chart_url,
         pie_chart_url=pie_chart_url,
     )
+
 
 
 @app.route("/admin/booking/<int:spot_id>", methods=["GET", "POST"])
