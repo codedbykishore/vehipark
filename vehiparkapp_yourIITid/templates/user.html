@@ -1,42 +1,52 @@
+
 {% extends "user_base.html" %}
 
 {% block title %}Available Parking Lots{% endblock %}
 
 {% block content %}
-<h4 class="text-end mb-3 me-3">Welcome, {{ username }}</h4>
-    <h2 class="mb-4 text-center">Available Parking Lots</h2>
-
-    <!-- Search Bar -->
-    <form method="GET" action="{{ url_for('user') }}" class="mb-4">
-        <div class="input-group">
-            <input type="text" name="query" class="form-control" placeholder="Search by location or pincode" value="{{ request.args.get('query', '') }}">
-            <button class="btn btn-primary" type="submit">Search</button>
-        </div>
+<div class="container py-3">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h6 class="text-muted m-0">Welcome, {{ username }}</h6>
+    <form method="GET" action="{{ url_for('user') }}" class="d-flex" role="search">
+      <input type="text" name="query" class="form-control form-control-sm me-2 border" placeholder="Location or Pincode" value="{{ request.args.get('query', '') }}">
+      <button class="btn btn-outline-dark btn-sm" type="submit">Search</button>
     </form>
+  </div>
 
-    <!-- Cards Grid -->
-    <div class="row">
+  <h5 class="text-center border-bottom pb-2 mb-3">Available Parking Lots</h5>
+
+  {% if parkings %}
+  <div class="table-responsive">
+    <table class="table table-sm table-bordered">
+      <thead class="table-light">
+        <tr>
+          <th>Location</th>
+          <th>Address</th>
+          <th>Pin Code</th>
+          <th>Price/hr</th>
+          <th>Available</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
         {% for lot in parkings %}
-        <div class="col-md-4 mb-4">
-            <div class="card h-100 shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title">{{ lot.primary_location_name }}</h5>
-                    <p class="card-text">
-                        <strong>Address:</strong> {{ lot.address }}<br>
-                        <strong>Pin Code:</strong> {{ lot.pin_code }}<br>
-                        <strong>Price:</strong> ₹{{ lot.price }} per hour<br>
-                        <strong>Available Spots:</strong> {{ available_counts[lot.id] }}/{{ lot.number_of_spots }}
-                    </p>
-                   <button class="btn btn-outline-success"><a href="/booking/{{ lot.id }} "class=btn btn-success w-100>Book Now</a></button> 
-                </div>
-            </div>
-        </div>
-        {% else %}
-        <div class="col-12">
-            <div class="alert alert-info text-center">No parking lots found.</div>
-        </div>
+        <tr>
+          <td>{{ lot.primary_location_name }}</td>
+          <td>{{ lot.address }}</td>
+          <td>{{ lot.pin_code }}</td>
+          <td>₹{{ lot.price }}</td>
+          <td>{{ available_counts[lot.id] }}/{{ lot.number_of_spots }}</td>
+          <td>
+            <a href="/booking/{{ lot.id }}" class="btn btn-success btn-sm w-100">Book</a>
+          </td>
+        </tr>
         {% endfor %}
-    </div>
-
-
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="alert alert-secondary text-center small">No parking lots found.</div>
+  {% endif %}
+</div>
 {% endblock %}
+

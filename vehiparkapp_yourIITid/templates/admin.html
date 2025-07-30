@@ -6,44 +6,36 @@
 {% block content %}
 <h1 class="text-center text-primary mb-4">Hello Admin</h1>
 
-<form method="get" action="{{ url_for('admin_search') }}" class="mb-4 container">
-  <div class="input-group">
-    <input type="text" name="query" class="form-control" placeholder="Search Users, Bookings, or Parking..." required>
-    <button class="btn btn-primary" type="submit">Search</button>
-  </div>
+<form method="get" action="{{ url_for('admin_search') }}" class="d-flex justify-content-center mb-4" style="gap: 10px;">
+  <input type="text" name="query" placeholder="Search..." required class="form-control w-50">
+  <button type="submit" class="btn btn-primary">Search</button>
 </form>
 
-<div class="container">
-    <div class="row">
-        <div class="col-md-4 mb-3">
-            <div class="card h-100">
-                <div class="card-body">
-                    <h5 class="card-title">Manage Parking</h5>
-                    <p class="card-text">Add, Update, Delete parking</p>
-                    <a href="/parking" class="btn btn-primary">Manage Parking</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4 mb-3">
-            <div class="card h-100">
-                <div class="card-body">
-                    <h5 class="card-title">Manage User</h5>
-                    <p class="card-text">Add, Update, Delete User</p>
-                    <a href="/admin_user" class="btn btn-primary">Manage Users</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4 mb-3">
-            <div class="card h-100">
-                <div class="card-body">
-                    <h5 class="card-title">Summary</h5>
-                    <p class="card-text">Summary of all parking and users</p>
-                    <a href="/admin/summary" class="btn btn-primary">Summary of Data</a>
-                </div>
-            </div>
-        </div>
+<div class="container" style="max-width: 600px;">
+  <div class="border p-3 mb-3">
+    <h3>Manage Parking</h3>
+    <p>Add, Update, Delete parking</p>
+    <div class="text-end">
+      <a href="/parking" class="btn btn-secondary btn-sm">Go →</a>
     </div>
+  </div>
+
+  <div class="border p-3 mb-3">
+    <h3>Manage Users</h3>
+    <p>Add, Update, Delete users</p>
+    <div class="text-end">
+      <a href="/admin_user" class="btn btn-secondary btn-sm">Go →</a>
+    </div>
+  </div>
+
+  <div class="border p-3">
+    <h3>Summary</h3>
+    <p>Summary of parking and users</p>
+    <div class="text-end">
+      <a href="/admin/summary" class="btn btn-secondary btn-sm">Go →</a>
+    </div>
+  </div>
 </div>
 
-
 {% endblock %}
+
