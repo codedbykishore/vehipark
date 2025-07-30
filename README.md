@@ -2,8 +2,8 @@
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/23f2000466/Quiz-Master
-   cd Quiz-Master/quiz_master_23f2000466
+   git clone https://github.com/24f2001283/vehipark
+   cd vehipark/vehi_park_app_24f2001283/
    ```
 
 2. Set up a virtual environment:
@@ -33,8 +33,6 @@
    ```bash
    python app.py
    ```
-   
-
 
 2. Access the application:  
    Open your browser and visit: [http://127.0.0.1:5000/](http://127.0.0.1:5000/)
