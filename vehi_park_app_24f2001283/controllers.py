@@ -57,6 +57,7 @@ def register():
         fullname = request.form["fullname"]
         address = request.form["address"]
         pincode = request.form["pincode"]
+        
         user = User(
             username=username,
             password=generate_password_hash(password),
@@ -66,7 +67,14 @@ def register():
         )
         db.session.add(user)
         db.session.commit()
-        return redirect(url_for("login"))
+
+        if session.get("username") == "admin":
+            flash("User registered successfully.", "success")
+            return redirect(url_for("admin_user"))
+        else:
+            flash("Registration successful. Please log in.", "success")
+            return redirect(url_for("login"))
+
     return render_template("signup.html")
 
 
